@@ -601,7 +601,7 @@ void InspectableWebContents::AddDevToolsExtensionsToClient() {
   if (!registry)
     return;
 
-  base::ListValue results;
+  base::Value::List results;
   for (auto& extension : registry->enabled_extensions()) {
     auto devtools_page_url =
         extensions::chrome_manifest_urls::GetDevToolsPage(extension.get());
@@ -615,17 +615,17 @@ void InspectableWebContents::AddDevToolsExtensionsToClient() {
         web_contents_->GetPrimaryMainFrame()->GetProcess()->GetID(),
         url::Origin::Create(extension->url()));
 
-    auto extension_info = std::make_unique<base::DictionaryValue>();
-    extension_info->SetString("startPage", devtools_page_url.spec());
-    extension_info->SetString("name", extension->name());
-    extension_info->SetBoolean(
-        "exposeExperimentalAPIs",
-        extension->permissions_data()->HasAPIPermission(
-            extensions::mojom::APIPermissionID::kExperimental));
-    results.Append(base::Value::FromUniquePtrValue(std::move(extension_info)));
+    base::Value::Dict extension_info;
+    extension_info.Set("startPage", devtools_page_url.spec());
+    extension_info.Set("name", extension->name());
+    extension_info.Set("exposeExperimentalAPIs",
+                       extension->permissions_data()->HasAPIPermission(
+                           extensions::mojom::APIPermissionID::kExperimental));
+    results.Append(base::Value(std::move(extension_info)));
   }
 
-  CallClientFunction("DevToolsAPI", "addExtensions", std::move(results));
+  CallClientFunction("DevToolsAPI", "addExtensions",
+                     base::Value(std::move(results)));
 }
 #endif
 
