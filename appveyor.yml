@@ -66,15 +66,6 @@ build_script:
       if (Test-Path -Path "$pwd\src\electron") {
         Remove-Item -Recurse -Force $pwd\src\electron
       }
-  - ps: >-
-      if (Test-Path -Path "$pwd\.electron_build_tools") {
-        Remove-Item -Recurse -Force $pwd\.electron_build_tools
-        Remove-Item -Recurse -Force $pwd\build_tools
-      }
-      if (Test-Path -Path "$pwd\build_tools") {
-        Remove-Item -Recurse -Force $pwd\.electron_build_tools
-        Remove-Item -Recurse -Force $pwd\build_tools
-      }
   - ps: Move-Item $env:APPVEYOR_BUILD_FOLDER -Destination src\electron
   - ps: >-
       if (Test-Path 'env:RAW_GOMA_AUTH') {
